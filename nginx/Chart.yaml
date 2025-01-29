@@ -1,0 +1,5 @@
+apiVersion: v2
+name: nginx-ingress
+description: A Helm chart to deploy NGINX Ingress Controller with internal NLB and private subnets.
+version: 0.1.0
+appVersion: "1.0.0"

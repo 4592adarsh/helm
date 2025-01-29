@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-ingress-controller
+  labels:
+    app: nginx-ingress
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: nginx-ingress
+  template:
+    metadata:
+      labels:
+        app: nginx-ingress
+    spec:
+      containers:
+        - name: nginx-ingress-controller
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - /nginx-ingress-controller
+            - --configmap=$(POD_NAMESPACE)/nginx-configuration
+            - --http-port={{ .Values.config.httpPort }}
+          ports:
+            - containerPort: {{ .Values.config.httpPort }}
+              name: http
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: {{ .Values.config.httpPort }}
+              scheme: HTTP
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: {{ .Values.config.httpPort }}
+              scheme: HTTP
+            initialDelaySeconds: 30
+            timeoutSeconds: 5

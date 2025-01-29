@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-ingress-service
+  labels:
+    app: nginx-ingress
+  annotations:
+    {{- range $key, $value := .Values.service.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.ports.http }}
+      targetPort: {{ .Values.config.httpPort }}
+      protocol: TCP
+      name: http
+  selector:
+    app: nginx-ingress
